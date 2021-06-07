@@ -40,7 +40,7 @@ final class SSH extends Authentication {
     $this->port = isset($this->config['port']) ? (int) $this->config['port'] : 22;
 
     if ($this->debug) {
-      define('NET_SSH2_LOGGING', NET_SSH2_LOG_COMPLEX);
+      define('NET_SSH2_LOGGING', SSH2::LOG_COMPLEX);
     }
   }
 
@@ -91,10 +91,11 @@ final class SSH extends Authentication {
     }
   }
 
-  public function send_command($command) {
+  public function send_command($command, $router) {
     $this->connect();
 
-    $data = $this->connection->exec($command);
+    $data = $router->send_ssh_command($command, $this->connection);
+
     if ($this->debug) {
       log_to_file($this->connection->getLog());
     }
